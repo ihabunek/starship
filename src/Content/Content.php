@@ -1,6 +1,6 @@
 <?php
 
-namespace Starship;
+namespace Starship\Content;
 
 use Parsedown;
 
@@ -17,16 +17,13 @@ abstract class Content
     public $target;
     public $template;
 
-    private $filters = [
-        'md' => 'markdown'
-    ];
-
     public function __construct(SplFileInfo $file)
     {
         list($content, $meta) = $this->load($file);
 
         $this->content = $content;
         $this->meta = $meta;
+        $this->path = $file->getRelativePathname();
 
         // Determine file extension based on the template
         if (isset($meta['template'])) {
@@ -57,14 +54,25 @@ abstract class Content
             throw new \Exception("Failed loading data.");
         }
 
+        // Pattern for detecting a metadata separator (---)
+        $pattern = '/' // Pattern start
+            . '^'       // Beginning of line (requires PCRE_MULTILINE)
+            . '---'     // Literal ---
+            . '\\s*'    // Zero or more whitespace characters
+            . '\\r?\\n' // Windows or Unix line break
+            . '/m';     // Pattern end, PCRE_MULTILINE modifier
+
         // Separate the meta-data from the content
-        $pattern = '/\\n---\\s*\\r?\\n/';
-        if (preg_match($pattern, $data, $matches, PREG_OFFSET_CAPTURE)) {
+        $data = trim($data);
+        if (
+            (substr($data, 0, 3) === '---') &&
+            (preg_match($pattern, $data, $matches, PREG_OFFSET_CAPTURE, 3))
+        ) {
             $pos = $matches[0][1];
             $len = strlen($matches[0][0]);
 
-            $meta = substr($data, 0, $pos);
-            $content = substr($data, $pos + $len);
+            $meta = trim(substr($data, 3, $pos - 3));
+            $content = trim(substr($data, $pos + $len));
         } else {
             $content = $data;
             $meta = null;

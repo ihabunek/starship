@@ -1,6 +1,6 @@
 <?php
 
-namespace Starship;
+namespace Starship\Content;
 
 use Parsedown;
 

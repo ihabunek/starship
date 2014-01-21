@@ -4,6 +4,10 @@ namespace Starship;
 
 use DateTime;
 
+use Starship\Content\Content;
+use Starship\Content\Page;
+use Starship\Content\Post;
+
 class Site
 {
     /**
@@ -34,9 +38,23 @@ class Site
         }
     }
 
+    public function addContent(Content $content)
+    {
+        if ($content instanceof Page) {
+            $this->addPage($content);
+        } else if ($content instanceof Post) {
+            $this->addPost($content);
+        } else {
+            throw new \Exception("Unknown content type.");
+        }
+    }
+
     public function addPage(Page $page)
     {
-        $this->pages[] = $page;
+        // Since pages are indexed by path, collision should never happen
+        assert(!isset($this->pages[$page->path]));
+
+        $this->pages[$page->path] = $page;
     }
 
     public function addPost(Post $post)

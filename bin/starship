@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+// Installed via composer
+$autoload = __DIR__ . '/../../../autoload.php';
+if (file_exists($autoload)) {
+	include $autoload;
+}
+
+// Installed from source
+$autoload = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($autoload)) {
+	include $autoload;
+}
+
+use Starship\Console\Application;
+
+$application = new Application;
+$application->run();

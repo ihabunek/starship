@@ -1,9 +1,23 @@
 {
+    "name": "starship/starship",
+    "type": "library",
+    "description": "A static site generator for PHP.",
+    "keywords": ["static","generator","jekyll"],
+    "homepage": "https://github.com/ihabunek/starship",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ivan Habunek",
+            "email": "ivan.habunek@gmail.com"
+        }
+    ],
     "require": {
+        "php": ">=5.4.0",
+        "erusev/parsedown": "~0.8",
         "symfony/console": "~2.4",
+        "symfony/filesystem": "~2.4",
         "symfony/finder": "~2.4",
         "symfony/yaml": "~2.4",
-        "erusev/parsedown": "~0.8",
         "twig/twig": "1.*"
     },
     "autoload": {

@@ -1,4 +1,4 @@
-Phormium License
+Starship License
 ================
 
 Copyright (c) 2014 Ivan Habunek <ivan.habunek@gmail.com>

@@ -15,8 +15,7 @@ class Page extends Content
 
         // Determine the target file
         $ext = $file->getExtension();
-        $this->target = $file->getRelativePathName();
-        $this->target = substr($this->target, 0, -strlen($ext));
+        $this->target = substr($this->path, 0, -strlen($ext));
         $this->target .= $this->extension;
     }
 }

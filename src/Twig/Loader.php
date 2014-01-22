@@ -5,6 +5,9 @@ namespace Starship\Twig;
 use Starship\Content\Page;
 use Starship\Site;
 
+/**
+ * Custom Twig loader which generates page templates.
+ */
 class Loader implements \Twig_LoaderInterface, \Twig_ExistsLoaderInterface
 {
     private $site;

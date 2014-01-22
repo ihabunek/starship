@@ -63,7 +63,7 @@ class Site
 
         $cat = $post->category;
         if (!isset($this->categories[$cat])) {
-            $this->categories[$cat] = [];
+            $this->categories[$cat][$post->path] = $post;
         }
 
         $this->categories[$cat][] = $post;

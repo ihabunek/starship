@@ -13,6 +13,14 @@ class Extension extends \Twig_Extension
         $this->globals = $globals;
     }
 
+    public function initRuntime(\Twig_Environment $env)
+    {
+        // Add an escaper for XML
+        $env->getExtension('core')->setEscaper('xml', function($env, $content) {
+            return htmlentities($content, ENT_COMPAT | ENT_XML1);
+        });
+    }
+
     public function getFilters()
     {
         return [

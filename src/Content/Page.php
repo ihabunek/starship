@@ -13,9 +13,26 @@ class Page extends Content
     {
         parent::__construct($file);
 
-        // Determine the target file
-        $ext = $file->getExtension();
-        $this->target = substr($this->path, 0, -strlen($ext));
-        $this->target .= $this->extension;
+        $this->target = $this->getTarget($file);
+    }
+
+    /** Determine the target file. */
+    protected function getTarget(SplFileInfo $file)
+    {
+        $sourceExt = $file->getExtension();
+        $sourcePath = $file->getRelativePathName();
+
+        // Determine target extension based on template
+        if (!empty($this->template) && $this->template != 'none') {
+            $targetExt = pathinfo($this->template, PATHINFO_EXTENSION);
+        } else {
+            $targetExt = $sourceExt;
+        }
+
+        // Replace source extension with that of the template
+        $target = substr($sourcePath, 0, -strlen($sourceExt));
+        $target .= $targetExt;
+
+        return $target;
     }
 }

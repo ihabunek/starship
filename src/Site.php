@@ -22,6 +22,7 @@ class Site
 
     public $pages = [];
     public $posts = [];
+    public $postsMap = [];
     public $categories = [];
 
     public function __construct(array $config)
@@ -29,12 +30,12 @@ class Site
         $this->config = $config;
         $this->time = new DateTime();
 
-        if (isset($config->name)) {
-            $this->name = $config->name;
+        if (isset($config['name'])) {
+            $this->name = $config['name'];
         }
 
-        if (isset($config->url)) {
-            $this->url = $config->url;
+        if (isset($config['url'])) {
+            $this->url = rtrim($config['url'], '/');
         }
     }
 
@@ -51,21 +52,19 @@ class Site
 
     public function addPage(Page $page)
     {
-        // Since pages are indexed by path, collision should never happen
-        assert(!isset($this->pages[$page->path]));
-
-        $this->pages[$page->path] = $page;
+        $this->pages[$page->id] = $page;
     }
 
     public function addPost(Post $post)
     {
         $this->posts[] = $post;
+        $this->postsMap[$post->id] = $post;
 
+        // Group by category
         $cat = $post->category;
         if (!isset($this->categories[$cat])) {
-            $this->categories[$cat][$post->path] = $post;
+            $this->categories[$cat] = [];
         }
-
         $this->categories[$cat][] = $post;
     }
 }

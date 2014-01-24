@@ -26,16 +26,25 @@ class BuildCommand extends Command
         $target = $source . DIRECTORY_SEPARATOR . '_site';
 
         if (file_exists($config)) {
-            $output->writeln("Configuration: <info>$config</info>");
+            $output->writeln("Config: <info>$config</info>");
         } else {
-            $output->writeln("Configuration: <comment>none</comment>");
+            $output->writeln("Config: <comment>none</comment>");
         }
 
-        $output->writeln("       Source: <info>$source</info>");
-        $output->writeln("       Target: <info>$target</info>");
+        $output->writeln("Source: <info>$source</info>");
+        $output->writeln("Target: <info>$target</info>");
         $output->writeln("");
+
+        $start = microtime(true);
 
         $builder = new Builder($source, $target, $output);
         $builder->build();
+
+        $end = microtime(true);
+        $duration = round($end - $start, 3);
+
+        $output->writeln("<comment>Done!</comment>");
+        $output->writeln("");
+        $output->writeln("Time taken: <info>$duration s</info>");
     }
 }

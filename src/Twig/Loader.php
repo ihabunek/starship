@@ -22,14 +22,25 @@ class Loader implements \Twig_LoaderInterface, \Twig_ExistsLoaderInterface
      */
     function getSource($name)
     {
-        $page = $this->site->pages[$name];
-        if ($page->template) {
-            $template =  "{% extends \"$page->template\" %}";
+        if (isset($this->site->pages[$name])) {
+            $content = $this->site->pages[$name];
+        } elseif (isset($this->site->postsMap[$name])) {
+            $content = $this->site->postsMap[$name];
+        } else {
+            throw new \Exception("Cannot find content \"$name\".");
+        }
+
+        if (empty($content->template)) {
+            throw new \Exception("Content does not have a template");
+        }
+
+        if ($content->template !== 'none') {
+            $template =  "{% extends \"$content->template\" %}";
             $template .= "{% block content %}";
-            $template .= $page->content;
+            $template .= $content->content;
             $template .= "{% endblock %}";
         } else {
-            $template = $page->content;
+            $template = $content->content;
         }
 
         return $template;
@@ -53,6 +64,6 @@ class Loader implements \Twig_LoaderInterface, \Twig_ExistsLoaderInterface
 
     function exists($name)
     {
-        return isset($this->site->pages[$name]);
+        return isset($this->site->pages[$name]) || isset($this->site->postsMap[$name]);
     }
 }

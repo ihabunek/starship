@@ -1,8 +1,8 @@
 {
     "name": "starship/starship",
     "type": "library",
-    "description": "A static site generator for PHP.",
-    "keywords": ["static","generator","jekyll"],
+    "description": "Starship is a static site generator for PHP.",
+    "keywords": ["static","generator","web","site","jekyll"],
     "homepage": "https://github.com/ihabunek/starship",
     "license": "MIT",
     "authors": [

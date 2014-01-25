@@ -52,7 +52,9 @@ class Compiler
 
         $phar->stopBuffering();
 
-        echo "Compiled: " . realpath($target) . "\n";
+        $path = realpath($target);
+        $this->output->writeln("");
+        $this->output->writeln("Compiled PHAR at <info>$path</info>");
     }
 
     private function addFiles($phar)
@@ -92,13 +94,20 @@ class Compiler
         foreach ([$finder1, $finder2] as $finder) {
             foreach ($finder as $file) {
                 $path = $file->getRelativePathname();
-                $contents = $file->getContents();
+                $realPath = $file->getRealPath();
+
+                if ($file->getExtension() === 'php') {
+                    $contents = php_strip_whitespace($realPath);
+                } else {
+                    $contents = $file->getContents();
+                }
 
                 // Add version and release date to Application.php
                 if ($path === $appPath) {
                     $contents = str_replace('@starship_version@', $this->version, $contents);
                     $contents = str_replace('@starship_release_date@', $this->releaseDate, $contents);
                 }
+
                 $phar->addFromString($path, $contents);
                 $progress->advance();
             }
@@ -113,6 +122,5 @@ class Compiler
         $phar->addFromString($path, $contents);
 
         $progress->finish();
-        $this->output->writeln("<comment>Done.</comment>");
     }
 }

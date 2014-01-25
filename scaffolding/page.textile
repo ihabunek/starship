@@ -1,0 +1,12 @@
+---
+title: A textile demo.
+template: base.html
+---
+
+h1. Hello there
+
+Did you know that Starship can render "textile":http://en.wikipedia.org/wiki/Textile_(markup_language)?
+
+table.
+| Markdown | cannot | render | these |
+| Didn't   | you    | know   | ?     |

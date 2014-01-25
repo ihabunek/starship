@@ -163,7 +163,7 @@ class Builder
         $finder->files()
             ->in($this->source)
             ->path('_posts')
-            ->name('/\\d{4}-\\d{2}-\\d{2}-.+\\.(md|html)/');
+            ->name('/\\d{4}-\\d{2}-\\d{2}-.+\\.(md|textile|html)/');
 
         foreach ($finder as $file) {
             $post = new Post($file);
@@ -180,7 +180,7 @@ class Builder
         $finder->files()
             ->in($this->source)
             ->notPath('_')
-            ->name('/\\.(md|html|xml)$/');
+            ->name('/\\.(md|textile|html|xml)$/');
 
         foreach ($finder as $file) {
             $page = new Page($file);

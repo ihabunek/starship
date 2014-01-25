@@ -8,6 +8,7 @@ class Post extends Content
 {
     public $category;
     public $date;
+    public $excerpt;
     public $slug;
 
     public $next;
@@ -37,6 +38,7 @@ class Post extends Content
         $sourcePath = $file->getRelativePathname();
 
         $this->category = $this->getCategory($sourcePath);
+        $this->excerpt = $this->getExcerpt($this->content);
         $this->date = new \DateTime($matches['date']);
         $this->slug = $matches['slug'];
 
@@ -78,6 +80,19 @@ class Post extends Content
         }
 
         return $category;
+    }
+
+    /** Returns the first HTML paragraph. */
+    protected function getExcerpt($content)
+    {
+        // Note usage of modifiers:
+        // - U (PCRE_UNGREEDY) - prevents matching multiple paragraphs
+        // - s (PCRE_DOTALL) - dot metacharacter in the pattern matches all
+        //   characters, including newlines
+        $pattern = "/<p[^>]*>.+<\/p>/Us";
+        if (preg_match($pattern, $content, $matches)) {
+            return $matches[0];
+        }
     }
 
     /** Determine the post URL. */

@@ -1,7 +1,6 @@
 Ideas for the future
 ====================
 
-* excerpts
 * pagination
 * locale support
 * next/previous post (within category)

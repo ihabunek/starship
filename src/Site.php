@@ -16,13 +16,25 @@ class Site
      */
     public $time;
 
-    public $name;
-    public $url;
+    /** Config data loaded from _config.yml. */
     public $config;
 
+    /** Site name as specified in config.name */
+    public $name;
+
+    /** Site URL as specified in config.url. */
+    public $url;
+
+    /** Holds all pages indexed by ID. */
     public $pages = [];
+
+    /** Holds all posts. */
     public $posts = [];
+
+    /** Maps posts by ID. */
     public $postsMap = [];
+
+    /** Holds arrays of posts indexed by category. */
     public $categories = [];
 
     public function __construct(array $config)

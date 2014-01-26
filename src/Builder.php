@@ -17,6 +17,10 @@ use Starship\Content\Page;
 use Starship\Content\Post;
 use Starship\Content\Content;
 
+
+/**
+ * Builds a Site object from content on disk.
+ */
 class Builder
 {
     /** Path to the source folder. */
@@ -82,7 +86,7 @@ class Builder
     /** Renders the site. */
     public function build()
     {
-        $this->output->writeln("<comment>Adding content...</comment>");
+        $this->output->writeln("<comment>Adding content</comment>");
         $this->addPages();
         $this->addPosts();
         $this->sortPosts();
@@ -91,7 +95,7 @@ class Builder
             $this->output->writeln("");
         }
 
-        $this->output->writeln("<comment>Rendering pages...</comment>");
+        $this->output->writeln("<comment>Rendering pages</comment>");
         foreach($this->site->pages as $page) {
             $this->renderContent($page);
         }
@@ -100,7 +104,7 @@ class Builder
             $this->output->writeln("");
         }
 
-        $this->output->writeln("<comment>Rendering posts...</comment>");
+        $this->output->writeln("<comment>Rendering posts</comment>");
         foreach($this->site->posts as $post) {
             $this->renderContent($post);
         }
@@ -109,7 +113,7 @@ class Builder
             $this->output->writeln("");
         }
 
-        $this->output->writeln("<comment>Copying statics...</comment>");
+        $this->output->writeln("<comment>Copying statics</comment>");
         $this->copyStatics();
 
         if ($this->output->isVerbose()) {
@@ -193,7 +197,7 @@ class Builder
 
     private function copyStatics()
     {
-        $extensions = ['css', 'js', 'jpg', 'jpeg', 'png', 'gif'];
+        $extensions = ['css', 'js', 'jpg', 'jpeg', 'png', 'gif', 'txt'];
         $pattern = '/\\.(' . implode("|", $extensions) . ')$/';
 
         $finder = new Finder();
@@ -211,10 +215,7 @@ class Builder
             $path = $file->getRelativePathname();
 
             $source = $file->getRealPath();
-            $target = implode(DIRECTORY_SEPARATOR, [
-                $this->target,
-                $path
-            ]);
+            $target = $this->target . DIRECTORY_SEPARATOR . $path;
 
             $fs->copy($source, $target);
 

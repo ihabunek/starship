@@ -4,6 +4,12 @@ namespace Starship\Twig;
 
 use Parsedown;
 
+/**
+ * A twig extension for Starship which provides for templates:
+ * - access to Starship globals (provided in constructor)
+ * - custom escapers
+ * - custom filters
+ */
 class Extension extends \Twig_Extension
 {
     private $globals;

@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class BuildCommand extends Command
 {
@@ -16,23 +17,46 @@ class BuildCommand extends Command
     {
         $this
             ->setName('build')
-            ->setDescription('Renders the web site');
+            ->setDescription('Renders the web site')
+            ->addOption(
+               'source', 's', InputOption::VALUE_REQUIRED,
+               'Source directory.', './'
+            )
+            ->addOption(
+               'target', 't', InputOption::VALUE_REQUIRED,
+               'Target directory.', './_site'
+            )
+            ->addOption(
+               'config', 'c', InputOption::VALUE_REQUIRED,
+               'Configuration file.', './_config.yml'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $source = getcwd();
-        $config = $source . DIRECTORY_SEPARATOR . '_config.yml';
-        $target = $source . DIRECTORY_SEPARATOR . '_site';
+        $source = $input->getOption('source');
+        $target = $input->getOption('target');
+        $config = $input->getOption('config');
 
-        if (file_exists($config)) {
-            $output->writeln("Config: <info>$config</info>");
-        } else {
-            $output->writeln("Config: <comment>none</comment>");
+        $fs = new Filesystem();
+        if (!$fs->exists($source)) {
+            throw new Exception("Source dir not found at \"$source\"");
+        }
+        if (!$fs->exists($target)) {
+            $fs->mkdir($target);
+        }
+        if (!$fs->exists($config)) {
+            throw new Exception("Config file not found at \"$config\"");
         }
 
+        $source = realpath($source);
+        $config = realpath($config);
+        $target = realpath($target);
+
+        $output->writeln("");
         $output->writeln("Source: <info>$source</info>");
         $output->writeln("Target: <info>$target</info>");
+        $output->writeln("Config: <info>$config</info>");
         $output->writeln("");
 
         $start = microtime(true);

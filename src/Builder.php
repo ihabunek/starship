@@ -47,10 +47,10 @@ class Builder
 
         $fs = new Filesystem();
         if (!$fs->exists($source)) {
-            throw new \Exception("Source folder not found at $source.");
+            throw new \Exception("Source folder not found at \"$source\".");
         }
         if (!$fs->exists($target)) {
-            $fs->mkdir($target);
+            throw new \Exception("Target folder not found at \"$target\".");
         }
 
         $this->target = $target;
@@ -86,39 +86,22 @@ class Builder
     /** Renders the site. */
     public function build()
     {
-        $this->output->writeln("<comment>Adding content</comment>");
         $this->addPages();
         $this->addPosts();
         $this->sortPosts();
 
-        if ($this->output->isVerbose()) {
-            $this->output->writeln("");
-        }
-
-        $this->output->writeln("<comment>Rendering pages</comment>");
+        $this->writeln("\n<comment>Rendering pages</comment>");
         foreach($this->site->pages as $page) {
             $this->renderContent($page);
         }
 
-        if ($this->output->isVerbose()) {
-            $this->output->writeln("");
-        }
-
-        $this->output->writeln("<comment>Rendering posts</comment>");
+        $this->writeln("\n<comment>Rendering posts</comment>");
         foreach($this->site->posts as $post) {
             $this->renderContent($post);
         }
 
-        if ($this->output->isVerbose()) {
-            $this->output->writeln("");
-        }
-
-        $this->output->writeln("<comment>Copying statics</comment>");
+        $this->writeln("\n<comment>Copying statics</comment>");
         $this->copyStatics();
-
-        if ($this->output->isVerbose()) {
-            $this->output->writeln("");
-        }
     }
 
     /** Loads and parses the config file. */
@@ -143,10 +126,8 @@ class Builder
     /** Renders a page. */
     private function renderContent(Content $content)
     {
-        if ($this->output->isVerbose()) {
-            $tpl = $content->template ? " <comment>($content->template)</comment>" : "";
-            $this->output->writeln("Rendering: <info>{$content->target}</info>{$tpl}");
-        }
+        $tpl = $content->template ? " <comment>($content->template)</comment>" : "";
+        $this->writeln("Rendering: <info>{$content->target}</info>{$tpl}");
 
         // Only templated files are run through Twig (template can be "none")
         if (isset($content->template)) {
@@ -163,6 +144,8 @@ class Builder
 
     private function addPosts()
     {
+        $this->writeln("\n<comment>Adding posts</comment>");
+
         $finder = new Finder();
         $finder->files()
             ->in($this->source)
@@ -171,15 +154,15 @@ class Builder
 
         foreach ($finder as $file) {
             $post = new Post($file);
-            if ($this->output->isVerbose()) {
-                $this->output->writeln("Adding: <info>$post->sourcePath</info>");
-            }
+            $this->writeln("Adding: <info>$post->sourcePath</info>");
             $this->site->addPost($post);
         }
     }
 
     private function addPages()
     {
+        $this->writeln("\n<comment>Adding pages</comment>");
+
         $finder = new Finder();
         $finder->files()
             ->in($this->source)
@@ -188,9 +171,7 @@ class Builder
 
         foreach ($finder as $file) {
             $page = new Page($file);
-            if ($this->output->isVerbose()) {
-                $this->output->writeln("Adding: <info>$page->sourcePath</info>");
-            }
+            $this->writeln("Adding: <info>$page->sourcePath</info>");
             $this->site->addPage($page);
         }
     }
@@ -219,15 +200,15 @@ class Builder
 
             $fs->copy($source, $target);
 
-            if ($this->output->isVerbose()) {
-                $this->output->writeln("Copied: <info>$path</info>");
-            }
+            $this->writeln("Copied: <info>$path</info>");
         }
     }
 
     /** Sorts posts by date (descending). Assigns post.next and posts.prev. */
     private function sortPosts()
     {
+        $this->writeln("\n<comment>Sorting</comment>");
+
         $cmpFn = function(Post $one, Post $other) {
             if ($one->date == $other->date) {
                 return 0;
@@ -249,6 +230,14 @@ class Builder
                     $post->prev = $posts[$key + 1];
                 }
             }
+        }
+    }
+
+    /** Writes to o*/
+    private function writeln($msg)
+    {
+        if ($this->output->isVerbose()) {
+            $this->output->writeln($msg);
         }
     }
 }

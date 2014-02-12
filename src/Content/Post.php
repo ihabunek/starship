@@ -38,9 +38,20 @@ class Post extends Content
         $sourcePath = $file->getRelativePathname();
 
         $this->category = $this->getCategory($sourcePath);
-        $this->excerpt = $this->getExcerpt($this->content);
-        $this->date = new \DateTime($matches['date']);
         $this->slug = $matches['slug'];
+
+        if (isset($this->meta['date'])) {
+            $this->date = new \DateTime();
+            $this->date->setTimestamp($this->meta['date']);
+        } else {
+            $this->date = new \DateTime($matches['date']);
+        }
+
+        if (isset($this->meta['excerpt'])) {
+            $this->excerpt = $this->meta['excerpt'];
+        } else {
+            $this->excerpt = $this->getExcerpt($this->content);
+        }
 
         $parts = $this->getTargetParts(
             $this->category,

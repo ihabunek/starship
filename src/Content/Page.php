@@ -14,6 +14,13 @@ class Page extends Content
         parent::__construct($file);
 
         $this->target = $this->getTarget($file);
+
+        $this->url = '/' . str_replace('\\', '/', $this->target);
+
+        // Remove "index.html" from the end, this provides a cleaner URL
+        if (substr($this->url, -10) === 'index.html') {
+            $this->url = substr($this->url, 0, -10);
+        }
     }
 
     /** Determine the target file. */

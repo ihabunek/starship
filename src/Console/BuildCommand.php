@@ -29,6 +29,10 @@ class BuildCommand extends Command
             ->addOption(
                'config', 'c', InputOption::VALUE_REQUIRED,
                'Configuration file.', './_config.yml'
+            )
+            ->addOption(
+               'drafts', 'd', InputOption::VALUE_NONE,
+               'Render drafts.'
             );
     }
 
@@ -37,6 +41,7 @@ class BuildCommand extends Command
         $source = $input->getOption('source');
         $target = $input->getOption('target');
         $config = $input->getOption('config');
+        $drafts = $input->getOption('drafts');
 
         $fs = new Filesystem();
         if (!$fs->exists($source)) {
@@ -57,18 +62,19 @@ class BuildCommand extends Command
         $output->writeln("Source: <info>$source</info>");
         $output->writeln("Target: <info>$target</info>");
         $output->writeln("Config: <info>$config</info>");
+        $output->writeln("Drafts: <info>" . ($drafts ? 'Yes' : 'No') . "</info>");
         $output->writeln("");
 
         $start = microtime(true);
 
         $builder = new Builder($source, $target, $config, $output);
+        $builder->setRenderDrafts($drafts);
         $builder->build();
 
         $end = microtime(true);
         $duration = round($end - $start, 3);
 
-        $output->writeln("<comment>Done!</comment>");
-        $output->writeln("");
+        $output->writeln("<comment>Done!</comment>\n");
         $output->writeln("Time taken: <info>$duration s</info>");
     }
 }

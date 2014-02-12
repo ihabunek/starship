@@ -41,6 +41,9 @@ class Builder
      */
     private $site;
 
+    /** Whether to render draft posts (located in _drafts). */
+    private $renderDrafts = false;
+
     public function __construct($source, $target, $config, OutputInterface $output)
     {
         $this->output = $output;
@@ -84,6 +87,11 @@ class Builder
         $this->twig->addExtension(new Twig\Extension([
             'site' => $this->site
         ]));
+    }
+
+    public function setRenderDrafts($renderDrafts)
+    {
+        $this->renderDrafts = $renderDrafts;
     }
 
     /** Renders the site. */
@@ -149,6 +157,10 @@ class Builder
             ->in($this->source)
             ->path('_posts')
             ->name('/\\d{4}-\\d{2}-\\d{2}-.+\\.(md|textile|html)/');
+
+        if ($this->renderDrafts) {
+            $finder->path('_drafts');
+        }
 
         foreach ($finder as $file) {
             $post = new Post($file);

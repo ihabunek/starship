@@ -77,12 +77,12 @@ class Post extends Content
         $bits = explode(DIRECTORY_SEPARATOR, $sourcePath);
         $bitCount = count($bits);
         if ($bitCount === 2) {
-            if ($bits[0] !== '_posts') {
+            if ($bits[0] !== '_posts' && $bits[0] !== '_drafts') {
                 throw new \Exception("Cannot parse post path: \"$sourcePath\"");
             }
             $category = null;
         } elseif ($bitCount === 3) {
-            if ($bits[1] !== '_posts') {
+            if ($bits[1] !== '_posts' && $bits[1] !== '_drafts') {
                 throw new \Exception("Cannot parse post path: \"$sourcePath\"");
             }
             $category = $bits[0];

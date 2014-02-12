@@ -41,7 +41,7 @@ class Builder
      */
     private $site;
 
-    public function __construct($source, $target, OutputInterface $output)
+    public function __construct($source, $target, $config, OutputInterface $output)
     {
         $this->output = $output;
 
@@ -52,12 +52,15 @@ class Builder
         if (!$fs->exists($target)) {
             throw new \Exception("Target folder not found at \"$target\".");
         }
+        if (!$fs->exists($config)) {
+            throw new \Exception("Config file not found at \"$config\".");
+        }
 
         $this->target = $target;
         $this->source = $source;
 
         // Load configuration, setup Site
-        $config = $this->loadConfig($this->source);
+        $config = $this->loadConfig($config);
         $this->site = new Site($config);
 
         // Setup a twig loader
@@ -105,13 +108,8 @@ class Builder
     }
 
     /** Loads and parses the config file. */
-    private function loadConfig($source)
+    private function loadConfig($path)
     {
-        $path = $source . DIRECTORY_SEPARATOR . "_config.yml";
-        if (!file_exists($path)) {
-            throw new \Exception("Configuration not found at: $path");
-        }
-
         $data = file_get_contents($path);
         if ($data === false) {
             throw new \Exception("Unable to load configuration from: $path");
@@ -233,7 +231,7 @@ class Builder
         }
     }
 
-    /** Writes to o*/
+    /** Writes to output. */
     private function writeln($msg)
     {
         if ($this->output->isVerbose()) {

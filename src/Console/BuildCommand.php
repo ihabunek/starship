@@ -61,7 +61,7 @@ class BuildCommand extends Command
 
         $start = microtime(true);
 
-        $builder = new Builder($source, $target, $output);
+        $builder = new Builder($source, $target, $config, $output);
         $builder->build();
 
         $end = microtime(true);

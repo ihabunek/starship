@@ -8,6 +8,7 @@ class Post extends Content
 {
     public $category;
     public $date;
+    public $excerpt;
     public $slug;
 
     public $next;
@@ -37,8 +38,20 @@ class Post extends Content
         $sourcePath = $file->getRelativePathname();
 
         $this->category = $this->getCategory($sourcePath);
-        $this->date = new \DateTime($matches['date']);
         $this->slug = $matches['slug'];
+
+        if (isset($this->meta['date'])) {
+            $this->date = new \DateTime();
+            $this->date->setTimestamp($this->meta['date']);
+        } else {
+            $this->date = new \DateTime($matches['date']);
+        }
+
+        if (isset($this->meta['excerpt'])) {
+            $this->excerpt = $this->meta['excerpt'];
+        } else {
+            $this->excerpt = $this->getExcerpt($this->content);
+        }
 
         $parts = $this->getTargetParts(
             $this->category,
@@ -64,12 +77,12 @@ class Post extends Content
         $bits = explode(DIRECTORY_SEPARATOR, $sourcePath);
         $bitCount = count($bits);
         if ($bitCount === 2) {
-            if ($bits[0] !== '_posts') {
+            if ($bits[0] !== '_posts' && $bits[0] !== '_drafts') {
                 throw new \Exception("Cannot parse post path: \"$sourcePath\"");
             }
             $category = null;
         } elseif ($bitCount === 3) {
-            if ($bits[1] !== '_posts') {
+            if ($bits[1] !== '_posts' && $bits[1] !== '_drafts') {
                 throw new \Exception("Cannot parse post path: \"$sourcePath\"");
             }
             $category = $bits[0];
@@ -78,6 +91,19 @@ class Post extends Content
         }
 
         return $category;
+    }
+
+    /** Returns the first HTML paragraph. */
+    protected function getExcerpt($content)
+    {
+        // Note usage of modifiers:
+        // - U (PCRE_UNGREEDY) - prevents matching multiple paragraphs
+        // - s (PCRE_DOTALL) - dot metacharacter in the pattern matches all
+        //   characters, including newlines
+        $pattern = "/<p[^>]*>.+<\/p>/Us";
+        if (preg_match($pattern, $content, $matches)) {
+            return $matches[0];
+        }
     }
 
     /** Determine the post URL. */

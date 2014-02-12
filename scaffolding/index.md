@@ -16,8 +16,9 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 A list:
 
-* Lorem
+* [This is another page](page.html)
 * ipsum
 * dolor
 * sit
 * amet
+

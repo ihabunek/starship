@@ -2,6 +2,8 @@
 
 namespace Starship\Content;
 
+use Netcarver\Textile\Parser as Textile;
+
 use Parsedown;
 
 use Symfony\Component\Finder\SplFileInfo;
@@ -72,6 +74,12 @@ abstract class Content
             case 'md':
             case 'markdown':
                 $content = Parsedown::instance()->parse($content);
+                break;
+
+            case 'tx':
+            case 'textile':
+                $parser = new Textile();
+                $content =  $parser->textileThis($content);
                 break;
         }
 

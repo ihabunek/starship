@@ -16,7 +16,7 @@ class InitCommand extends Command
     {
         $this
             ->setName('init')
-            ->setDescription('Creates a scaffold for a web site.')
+            ->setDescription('Creates a scaffold for a new web site.')
             ->addArgument(
                 'target', InputArgument::REQUIRED,
                 'Path to the target directory.'
@@ -56,7 +56,7 @@ class InitCommand extends Command
             if (!$force) {
                 $finder = new Finder();
                 $finder->in($target);
-                if (count($finder) > 0) {
+                if (!empty($finder)) {
                     throw new \Exception("Target folder exists and is not empty.");
                 }
             }
